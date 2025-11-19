@@ -38,9 +38,9 @@ services:
     command: >
       sh -c "
         echo 'Waiting for SQL Server to be ready...' &&
-        # sleep 10 &&
+        sleep 10 &&
         echo 'Starting Maven build with tests...' &&
-        # mvn clean install -Pjre11 -Denforcer.skip &&
+        mvn clean install -Pjre11 -Denforcer.skip &&
         echo 'Adding localized resources from official JAR...' &&
         apt update && apt-get install unzip -y && 
         wget -q https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.10.1.jre11/mssql-jdbc-12.10.1.jre11.jar -O /tmp/official.jar &&
