@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  # SQL Server database for running tests
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql-test-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mssql-jdbc-network
+
+  # Maven build container that runs tests
+  maven-build:
+    image: maven:3.9-eclipse-temurin-11
+    container_name: mssql-jdbc-builder
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    volumes:
+      - .:/workspace
+      - maven-cache:/root/.m2
+    working_dir: /workspace
+    environment:
+      # JDBC connection string for tests
+      # Format: jdbc:sqlserver://host:port;user=username;password=password;database=master;trustServerCertificate=true
+      - mssql_jdbc_test_connection_properties=jdbc:sqlserver://sqlserver:1433;user=sa;password=YourStrong@Passw0rd;database=master;trustServerCertificate=true;encrypt=false
+    command: >
+      sh -c "
+        echo 'Waiting for SQL Server to be ready...' &&
+        # sleep 10 &&
+        echo 'Starting Maven build with tests...' &&
+        # mvn clean install -Pjre11 -Denforcer.skip &&
+        echo 'Adding localized resources from official JAR...' &&
+        apt update && apt-get install unzip -y && 
+        wget -q https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.10.1.jre11/mssql-jdbc-12.10.1.jre11.jar -O /tmp/official.jar &&
+        cd target &&
+        unzip -q /tmp/official.jar 'com/microsoft/sqlserver/jdbc/SQLServerResource_*.class' &&
+        jar uf mssql-jdbc-*jre11+sp1.jar com/microsoft/sqlserver/jdbc/SQLServerResource_*.class &&
+        echo 'Localized resources added successfully' &&
+        rm -rf com /tmp/official.jar
+      "
+    networks:
+      - mssql-jdbc-network
+
+volumes:
+  maven-cache:
+    driver: local
+
+networks:
+  mssql-jdbc-network:
+    driver: bridge

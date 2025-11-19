@@ -1,0 +1,79 @@
+# Docker ignore file to speed up builds and reduce image size
+
+# Build outputs
+target/
+build/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+*.swp
+*.swo
+*~
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# Documentation (not needed in build container)
+*.md
+!DOCKER_README.md
+docs/
+
+# CI/CD files (not needed in container)
+.github/
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
+
+# Docker files (avoid recursive copies)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Test outputs
+test-results/
+test-output/
+surefire-reports/
+failsafe-reports/
+
+# Coverage reports
+jacoco-execs/
+coverage/
+.coverage
+
+# Node modules (if any)
+node_modules/
+
+# Maven local repository cache
+.m2/
+
+# Gradle cache
+.gradle/
+
+# Other
+outdated-dependencies.txt
+

@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.microsoft.sqlserver</groupId>
 	<artifactId>mssql-jdbc</artifactId>
-	<version>12.10.1</version>
+	<version>12.10.1+sp1</version>
 	<packaging>jar</packaging>
 	<name>Microsoft JDBC Driver for SQL Server</name>
 	<description>
@@ -299,7 +299,7 @@
 		<profile>
 			<id>jre11</id>
 			<build>
-				<finalName>${project.artifactId}-${project.version}.jre11${releaseExt}</finalName>
+				<finalName>${project.artifactId}-12.10.1.jre11+sp1</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
